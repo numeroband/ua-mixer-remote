@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>UA Control</title>
+    <meta charset="utf-8">
+    <script type="module" src="index.js"></script>
+  </head>
+  <body>
+    <label for="deviceSelect">Device:</label>
+    <select name="device" id="deviceSelect" onchange="updateDevice(this.value)"></select>
+    <label for="mixSelect">Mix:</label>
+    <select name="mix" id="mixSelect" onchange="updateMix(this.value)">
+        <option value="">Mix</option>
+    </select>
+    <table id="inputsTable">
+    </table>
+  </body>
+</html>

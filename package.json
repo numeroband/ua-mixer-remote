@@ -1,0 +1,9 @@
+{
+  "author": "Lorenzo Soto",
+  "name": "ua-mixer-remote",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.12.0"
+  }
+}

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Live Chat Client</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="2-client.css">
+    <script src="2-client.js"></script>
+  </head>
+  <body>
+    <!-- (A) CHAT HISTORY -->
+    <div id="chatShow"></div>
+
+    <!-- (B) CHAT FORM -->
+    <form id="chatForm" onsubmit="return chat.send();">
+      <input id="chatMsg" type="text" required disabled>
+      <input id="chatGo" type="submit" value="Go" disabled>
+    </form>
+  </body>
+</html>
