@@ -8,13 +8,19 @@
     <script type="module" src="index.js"></script>
   </head>
   <body>
-    <label for="deviceSelect">Device:</label>
-    <select name="device" id="deviceSelect" onchange="updateDevice(this.value)"></select>
-    <label for="mixSelect">Mix:</label>
-    <select name="mix" id="mixSelect" onchange="updateMix(this.value)">
-        <option value="">Mix</option>
-    </select>
-    <table id="inputsTable">
-    </table>
+    <h1>Tocata Control</h1>
+    <div id="connected">
+      <div>
+        <label for="deviceSelect">Device:</label>
+        <select name="device" id="deviceSelect" onchange="updateDevice(this.value)"></select>
+        <label for="mixSelect">Mix:</label>
+        <select name="mix" id="mixSelect" onchange="updateMix(this.value)"></select>
+      </div>
+      <table id="inputsTable">
+      </table>
+    </div>
+    <div id="disconnected" style="display: none;">
+      <h2>Disconnected</h2>
+    </div>
   </body>
 </html>

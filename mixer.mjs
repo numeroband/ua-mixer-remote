@@ -64,29 +64,19 @@ export class Mixer {
 
   subscribeInput(deviceId, input) {
     const path = key => ['devices', deviceId, input.inputType, input.inputId, key];
-    const inputChanged = _ => {
-      if (this.inputChanged) {
-        this.inputChanged(deviceId, input);
-      }
-    }
-    this.subscribe(path('FaderLevel'), [value => input.gain = value, inputChanged]);
-    this.subscribe(path('FaderLevelTapered'), [value => input.gainTapered = value, inputChanged]);
-    this.subscribe(path('Pan'), [value => input.pan = value, inputChanged]);
-    this.subscribe(path('Mute'), [value => input.mute = value, inputChanged]);
-    this.subscribe(path('Solo'), [value => input.solo = value, inputChanged]);
+    this.subscribe(path('FaderLevel'), deviceId, input, null, 'gain');
+    this.subscribe(path('FaderLevelTapered'), deviceId, input, null, 'gainTapered');
+    this.subscribe(path('Pan'), deviceId, input, null, 'pan');
+    this.subscribe(path('Mute'), deviceId, input, null, 'mute');
+    this.subscribe(path('Solo'), deviceId, input, null, 'solo');
   }
 
   subscribeSend(deviceId, input, send) {
     const path = key => ['devices', deviceId, input.inputType, input.inputId, 'sends', send.sendId, key];
-    const inputChanged = _ => {
-      if (this.inputChanged) {
-        this.inputChanged(deviceId, input, send);
-      }
-    }
-    this.subscribe(path('Gain'), [value => send.gain = value, inputChanged]);
-    this.subscribe(path('GainTapered'), [value => send.gainTapered = value, inputChanged]);
-    this.subscribe(path('Pan'), [value => send.pan = value, inputChanged]);
-    this.subscribe(path('Bypass'), [value => send.mute = value, inputChanged]);
+    this.subscribe(path('Gain'), deviceId, input, send, 'gain');
+    this.subscribe(path('GainTapered'), deviceId, input, send, 'gainTapered');
+    this.subscribe(path('Pan'), deviceId, input, send, 'pan');
+    this.subscribe(path('Bypass'), deviceId, input, send, 'mute');
   }
 
   async getSends(device, input) {
@@ -136,15 +126,10 @@ export class Mixer {
     this.send(`set ${pathStr} ${value}`);
   }
 
-  subscribe(path, callbacks) {
+  subscribe(path, deviceId, input, send, key) {
     const pathStr = '/' + path.join('/');
     const response = pathStr + '/value';
-    let subscriptions = this.subscriptions.get(response);
-    if (!subscriptions) {
-      subscriptions = [];
-      this.subscriptions.set(response, subscriptions);
-    }
-    callbacks.forEach(callback => subscriptions.push(callback));
+    this.subscriptions.set(response, {deviceId, input, send, key})
     this.send(`subscribe ${pathStr}`);    
   }
 
@@ -158,9 +143,16 @@ export class Mixer {
       this.promises.delete(msg.path);
     }
 
-    const subscriptions = this.subscriptions.get(msg.path);
-    if (subscriptions) {
-      subscriptions.forEach(subscription => subscription(msg.data));
+    const subscription = this.subscriptions.get(msg.path);
+    if (subscription && this.inputChanged) {
+      const {deviceId, input, send, key} = subscription;
+      const value = msg.data;
+      if (send) {
+        send[key] = value;
+      } else {
+        input[key] = value;
+      }
+      this.inputChanged(deviceId, input, send, key, msg.data);
     }
   }
 
